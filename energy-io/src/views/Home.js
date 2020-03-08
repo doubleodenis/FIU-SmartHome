@@ -1,17 +1,12 @@
 import React from "react";
-import styled from "styled-components";
+import PageContainer from "../components/PageContainer/PageContainer";
 
-const Container = styled.div`
-    margin: 0px 15px;
-    padding: 15px;
-    display: flex;
-`;
 const Home = () => {
     return (
-        <Container>
-            help
-        </Container>
-    );
+        <PageContainer>
+            Main page
+        </PageContainer>
+    )
 }
 
 export default Home;
