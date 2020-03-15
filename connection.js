@@ -9,24 +9,23 @@ var connection = mysql.createConnection({
   });
   
 
+connection.connect(function(err) {
+    if (err) {
+        console.error('Database connection failed: ' + err.stack);
+        return;
+    }
+    console.log('Connected to database.');
+});
 
 
-function query(q) {
-    connection.connect(function(err) {
-        if (err) {
-            console.error('Database connection failed: ' + err.stack);
-            return;
-        }
-    
-        console.log('Connected to database.');
-    });
+function query(q, callback) {
 
     connection.query(q, function (error, results, fields) {
         if (error) throw error;
-        console.log('RESULT: ', results);
+        // console.log('RESULT: ', results);
+        return callback(results);
     });
-    
-    connection.end();
+
 }
 module.exports = {
     query

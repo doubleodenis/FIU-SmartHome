@@ -8,7 +8,8 @@ const Container = styled.div`
     padding: .5em;
     border-right: 1px solid #a2a2a2;
     border-left: 1px solid #a2a2a2;
-	background-color: #f4f4f4;
+    // background-color: #f4f4f4;
+    background-color: gray;
     min-height: -webkit-fill-available;
     min-height: 90vh;
 `;

@@ -1,5 +1,5 @@
 import React from 'react';
-import { VictoryChart, VictoryLine, VictoryTooltip, VictoryScatter, VictoryVoronoiContainer, VictoryCursorContainer} from "victory";
+import { VictoryChart, VictoryLine, VictoryTooltip, VictoryScatter, VictoryVoronoiContainer, VictoryCursorContainer, VictoryTheme} from "victory";
 /**
  * @param  {} props.data An array of objects containing data?
  */
@@ -13,13 +13,13 @@ const LineChart = (props) => {
         { x: 4, y: 4 },
         { x: 5, y: 6 }
         ];
-    // data = data.map(datum => {
-    //     datum.label = `x: ${datum.x}, y: ${datum.y}\nTooltip`
-    //     return datum;
-    // });
-    
+    const now = new Date(Date.now());
+    const tenMinutesPast = new Date(Date.now() - (1000 * 60 * 5)); //1000 milliseconds * 60 seconds/min * 10 min
+
+    const domain = { x: [tenMinutesPast, now] }
     return (
         <VictoryChart 
+            theme={VictoryTheme.material}
             height={500}
             width={500}    
             containerComponent={ <VictoryVoronoiContainer
@@ -36,7 +36,7 @@ const LineChart = (props) => {
             scale={{x: 'time', y: 'linear'}}
 
           >
-            <VictoryScatter name="scatter" data={data} 
+            <VictoryScatter name="scatter" data={props.data} 
                 style={{
                     data: { fill: "green", strokeWidth: ({ active }) => active ? 2 : 1}
                 }}
@@ -44,13 +44,13 @@ const LineChart = (props) => {
                 />
                 
             <VictoryLine
-            // theme={VictoryTheme.material}
+                
                 style={{
                     data: { stroke: ({ active }) => active ? "green" : "lightgreen", strokeWidth: ({ active }) => active ? 2 : 1}
                 }}
-                padding={{ top: 20, bottom: 60 }}
-                domain={{x: [0, 10], y: [0, 50]}}
-                data={data}
+                // padding={{ top: 20, bottom: 60 }}
+                domain={domain}
+                data={props.data}
                 events={[{
                     target: "parent",
                     eventHandlers: {
