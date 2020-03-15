@@ -5,6 +5,7 @@
   "main": "server.js",
   "dependencies": {
     "express": "^4.17.1",
+    "moment": "^2.24.0",
     "mysql": "^2.18.1",
     "victory": "^34.1.3",
     "wemo-client": "^0.15.0"
