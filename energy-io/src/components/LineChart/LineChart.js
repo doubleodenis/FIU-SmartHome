@@ -1,22 +1,21 @@
 import React from 'react';
 import { VictoryChart, VictoryLine, VictoryTooltip, VictoryScatter, VictoryVoronoiContainer, VictoryCursorContainer, VictoryTheme} from "victory";
+import moment from "moment";
+
 /**
  * @param  {} props.data An array of objects containing data?
  */
 const LineChart = (props) => {
 
-    // let data = props.data;
-    let data = [
-        { x: 1, y: 11 },
-        { x: 2, y: 3 },
-        { x: 3, y: 7 },
-        { x: 4, y: 4 },
-        { x: 5, y: 6 }
-        ];
-    const now = new Date(Date.now());
-    const tenMinutesPast = new Date(Date.now() - (1000 * 60 * 5)); //1000 milliseconds * 60 seconds/min * 10 min
-
-    const domain = { x: [tenMinutesPast, now] }
+    let domain = {};
+    if(props.data.length > 0) {
+      const first = props.data[0].x;
+      const last = props.data[props.data.length - 1].x;
+  
+      domain = { x: [first, last] };
+    }
+    
+    
     return (
         <VictoryChart 
             theme={VictoryTheme.material}
