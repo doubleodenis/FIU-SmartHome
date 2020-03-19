@@ -1,8 +1,9 @@
 const express = require("express");
 const cors = require('cors');
 const bodyParser = require("body-parser");
-
+const wemo = require("./scripts/EnergyUsageWemo")
 // const wemo = require("./scripts/wemo");
+const network = require("./scripts/network");
 const app = express();
 
 app.use(cors());
