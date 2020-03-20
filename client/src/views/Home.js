@@ -2,8 +2,9 @@ import React, {useState, useEffect} from "react";
 import PageContainer from "../components/PageContainer/PageContainer";
 import LineChart from "../components/LineChart/LineChart";
 import EnergyService from "../services/energyService";
-// import Dropdown from "../components/Dropdown/Dropdown"
-import { Dropdown } from "semantic-ui-react";
+import OccupancyChart from "../components/OccupancyChart/OccupancyChart";
+import NetworkChart from "../components/NetworkChart/NetworkChart";
+import CustomDropdown from "../components/CustomDropdown/CustomDropdown";
 
 function getEnergy(setter) {
     EnergyService.getEnergy(120).then(res => {
@@ -41,14 +42,22 @@ const Home = () => {
     }, 1000 * 30);
 
 
-    function selectTime(obj) {
-        console.log(obj);
-    }
+    let times = [
+        { text: '30m', value: '30' },
+        { text: '1h', value: '60'},
+        { text: '6h', value: '360'},
+        { text: '12h', value: '720'}
+    ]
     return (
         <PageContainer>
             {/* <Dropdown placeholder="test" values={[{name: '1', value: '1'}]} onSelect={(obj) => selectTime(obj)}/> */}
-            {/* <Dropdown placeholder="help"></Dropdown> */}
-            <LineChart data={energy}></LineChart>
+            <div style={{width: 250, height: 100}}>
+                <CustomDropdown placeholder="Time" items={times}></CustomDropdown>
+            </div>
+            
+            {/* <LineChart data={energy}></LineChart> */}
+            <NetworkChart></NetworkChart>
+            <OccupancyChart></OccupancyChart>
         </PageContainer>
     )
 }
