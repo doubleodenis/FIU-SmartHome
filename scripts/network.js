@@ -1,6 +1,6 @@
 const pcap = require('pcap'),
     tcp_tracker = new pcap.TCPTracker(),
-    pcap_session = pcap.createSession('en0', { filter: "ip proto \\tcp" });
+    pcap_session = pcap.createSession('wlan0', { filter: "ip proto \\tcp" });
  
 tcp_tracker.on('session', function (session) {
   console.log("Start of session between " + session.src_name + " and " + session.dst_name);
