@@ -2,7 +2,7 @@ const express = require("express");
 const cors = require('cors');
 const bodyParser = require("body-parser");
 // const wemo = require("./scripts/EnergyUsageWemo")
-// const wemo = require("./scripts/wemo");
+const db = require("./connection")
 const network = require("./scripts/network");
 const app = express();
 
@@ -10,7 +10,6 @@ app.use(cors());
 
 app.use(function(req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
-    // res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
     next();
   });
 
@@ -34,13 +33,19 @@ app.get("/", function(req, res) {
 const energyApi = require('./api/wemoApi');
 app.use("/energy", energyApi);
 
+const networkApi = require('./api/networkApi');
+app.use("/network", networkApi);
+
+
 app.listen(PORT, function() {
     console.log(`Server running on port ${PORT}!`);
 });
 
-// db.query('SELECT * FROM Energy', function(res) {
-//     res.forEach(r => {
-//         console.log(moment(new Date(r.Date)).format("'YYYY-MM-DD HH:mm:ss'"));
-//     })
-// });
+//id_network, user_id, received_bytes, sent bytes, ip_address, time
+db.query('SELECT * FROM Network', function(res) {
+    console.log(res);
+});
 
+// db.query('SELECT * FROM Energy', function(res) {
+//     console.log(res);
+// });

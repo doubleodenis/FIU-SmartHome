@@ -14,7 +14,6 @@ connection.connect(function(err) {
         console.error('Database connection failed: ' + err.stack);
         return;
     }
-    console.log('Connected to database.');
 });
 
 
@@ -22,11 +21,29 @@ function query(q, callback) {
 
     connection.query(q, function (error, results, fields) {
         if (error) throw error;
-        // console.log('RESULT: ', results);
+        console.log(fields)
         return callback(results);
     });
-
 }
+
+function insert(sql, callback) {
+    connection.connect(function(err) {
+        if (err) {
+            console.error('Database connection failed: ' + err.stack);
+            return;
+        }
+        // console.log('Connected to database.');
+    });
+
+    connection.query(sql, function (error, results, fields) {
+        if (error) throw error;
+        
+        return callback(results);
+    });
+}
+
 module.exports = {
-    query
+    query,
+    insert,
+    connection
 };  
