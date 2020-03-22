@@ -4,6 +4,7 @@ const bodyParser = require("body-parser");
 // const wemo = require("./scripts/EnergyUsageWemo")
 const db = require("./connection")
 const network = require("./scripts/network");
+const netList = require("network-list");
 const app = express();
 
 app.use(cors());
@@ -42,10 +43,10 @@ app.listen(PORT, function() {
 });
 
 //id_network, user_id, received_bytes, sent bytes, ip_address, time
-db.query('SELECT * FROM Network', function(res) {
-    console.log(res);
-});
-
-// db.query('SELECT * FROM Energy', function(res) {
+// db.query('SELECT * FROM Network', function(res) {
 //     console.log(res);
 // });
+
+netList.scanEach({}, (err, obj) => {
+    if(obj.alive) console.log(obj); // device object
+});
