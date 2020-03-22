@@ -27,14 +27,6 @@ function query(q, callback) {
 }
 
 function insert(sql, callback) {
-    connection.connect(function(err) {
-        if (err) {
-            console.error('Database connection failed: ' + err.stack);
-            return;
-        }
-        // console.log('Connected to database.');
-    });
-
     connection.query(sql, function (error, results, fields) {
         if (error) throw error;
         

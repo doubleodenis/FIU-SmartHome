@@ -6,18 +6,10 @@ var pcap_session = null, tcp_tracker = null, devices = [];
 function startNetworkTracking() {
     //Add ips to device list
     function addDevice(device) {
-        console.log(device);
         const d = device.split(':')[0]; //Remove port from ip
         if(!devices.includes(d)) devices.push(d);
     }
 
-    let sessionObj = {
-        src: null,
-        dst: null,
-        bytes_sent: 0,
-        bytes_received: 0   
-    }
-    
     tcp_tracker = new pcap.TCPTracker();
     pcap_session = pcap.createSession('wlan0', { filter: "ip proto \\tcp" });
     
@@ -69,14 +61,6 @@ function startNetworkTracking() {
         var packet = pcap.decode.packet(raw_packet);
         tcp_tracker.track_packet(packet);
     });
-    
-    // setTimeout(function () {
-    //     console.log("Listening on " + pcap_session.device_name);
-    // }, 5000);
-    
-    // setInterval(function() {
-    //     console.log(pcap_session.stats());
-    // }, 10000)
 
     return {
         pcap_session,
