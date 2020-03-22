@@ -4,7 +4,6 @@ const bodyParser = require("body-parser");
 // const wemo = require("./scripts/EnergyUsageWemo")
 const db = require("./connection")
 const network = require("./scripts/network");
-const netList = require("network-list");
 const app = express();
 
 app.use(cors());
@@ -47,6 +46,9 @@ app.listen(PORT, function() {
 //     console.log(res);
 // });
 
-netList.scanEach({}, (err, obj) => {
-    if(obj.alive) console.log(obj); // device object
-});
+const net = network.startNetworkTracking();
+
+//List of devices
+setTimeout(function () {
+    console.log("Devices:", net.devices);
+}, 5000);

@@ -28,7 +28,7 @@ function foundDevice(err, device) {
         power
       );
 
-      date = moment(new Date()).format("YYYY-MM-DD HH:mm:ss");
+      let date = moment(new Date()).format("YYYY-MM-DD HH:mm:ss");
       let val = power + ", " + "'" + date + "'";
       var sql = `INSERT INTO Energy (Energy, Date) VALUES (${val})`;
 
