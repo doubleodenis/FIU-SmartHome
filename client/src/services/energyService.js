@@ -15,8 +15,17 @@ const getEnergy = (time) => {
     .catch(err => console.log(err));
 }
 
+const getWemos = () => {
+    return axios.get(`${hostname}/energy/devices`, {
+        headers: {}
+    })
+    .then(res => res.data)
+    .catch(err => console.log(err))
+}
+
 const EnergyService = {
-    getEnergy
+    getEnergy,
+    getWemos
 }
 
 export default EnergyService;
