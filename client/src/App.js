@@ -13,13 +13,12 @@ function App() {
 
     //Called as OnComponentDidMount
     useEffect(function() {
-        // NetworkService.getNetworkDevices()
-        // .then(res => setDevices(res))
-        // .catch(err => console.log(err));
-        setDevices([
-            '10.3.141.120',
-            '10.3.141.119'
-        ])
+        NetworkService.getNetworkDevices()
+        .then(res => {
+            console.log("devices", res);
+            setDevices(res);
+        })
+        .catch(err => console.log(err));
     }, [])
 
     function selectDevice(device) {
