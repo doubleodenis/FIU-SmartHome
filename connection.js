@@ -1,4 +1,4 @@
-const mysql = require("mysql");
+const mysql = require("mysql2");
 
 var connection = mysql.createConnection({
     host     : process.env.RDS_HOSTNAME || "hassio-senior.ch89zlanp2xd.us-east-2.rds.amazonaws.com",
@@ -18,21 +18,19 @@ connection.connect(function(err) {
 
 
 function query(q, callback) {
-
-    connection.query(q, function (error, results, fields) {
-        if (error) throw error;
-        console.log(fields)
-        return callback(results);
-    });
+    connection.execute(sql,  function(err, results, fields) {
+    console.log(results); 
+  }
+);
 }
 
 function insert(sql, callback) {
-    connection.query(sql, function (error, results, fields) {
-        if (error) throw error;
-        
-        return callback(results);
-    });
+    connection.execute(sql,  function(err, results, fields) {
+    console.log(results); 
+  }
+);
 }
+
 
 module.exports = {
     query,
