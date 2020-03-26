@@ -8,7 +8,7 @@ const hostname = process.env.PORT ? "http://localhost:" + process.env.PORT : "ht
  */
 
 const getBandwidth = (ip, time) => {
-    return axios.get(`${hostname}/network/${ip}?time=${time}`, {
+    return axios.get(`${hostname}/network/ip/${ip}?time=${time}`, {
         headers:{    
         },
     })

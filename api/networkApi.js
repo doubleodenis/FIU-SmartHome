@@ -29,8 +29,8 @@ router.get('/', async (req, res) => {
 });
 
 //Get network data for a cetrtain ip
-router.get('/:ip', async (req, res) => {
-    console.log('GET /network/:ip');
+router.get('/ip/:ip', async (req, res) => {
+    console.log('GET /network/ip/:ip');
     //get query parameters
     const time = req.query.time;
     const ip = req.params.ip;

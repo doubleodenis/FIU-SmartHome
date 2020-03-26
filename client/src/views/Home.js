@@ -75,9 +75,10 @@ const Home = (props) => {
     function test() {
         console.log(props);
     }
+
     return props.device ? (
         <PageContainer style={{ }}>
-            <Header as="h2">{props.device}</Header>
+            <Header as="h2">{props.device.ip_address}</Header>
             <div style={{width: 250, height: 100}}>
                 <CustomDropdown label="Wemo" placeholder="Wemo" items={[]} onClick={handleWemo} 
                 labelIcon={<Icon name="linkify" style={{margin: "0px 3px"}}/>}/>

@@ -4,15 +4,15 @@ import { Menu, Button, Icon, Sidebar, Divider, Container, Header } from 'semanti
 
 const CustomSidebar = (props) => {
     function createDeviceList (devices) {
-        return devices.map(device => {
+        return devices ? devices.map(device => {
             return (
-                <Menu.Item key={device} 
+                <Menu.Item key={device.ip_address} 
                 onClick={() => props.onSelect(device)}
                 active={props.selected === device}>
-                    {device}
+                    {device.ip_address}
                 </Menu.Item>
-            )
-        })
+            );
+        }) : [];
     }
 
     return (
@@ -29,7 +29,7 @@ const CustomSidebar = (props) => {
         >
             <Header as='a' href="/" style={{color: "white"}}>energy.io</Header>
             <Divider />
-            <Button compact icon labelPosition="right">Devices<Icon name="refresh" style={{margin: "0px 10px"}}/></Button>
+            <Button compact icon labelPosition="right" onClick={props.onRefresh}>Devices<Icon name="refresh" style={{margin: "0px 10px"}}/></Button>
             {createDeviceList(props.devices)}   
             {/* <Menu items={devices}/> */}
     </Sidebar>

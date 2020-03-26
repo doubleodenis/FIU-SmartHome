@@ -13,21 +13,26 @@ function App() {
 
     //Called as OnComponentDidMount
     useEffect(function() {
-        NetworkService.getNetworkDevices()
-        .then(res => {
-            console.log("devices", res);
-            setDevices(res);
-        })
-        .catch(err => console.log(err));
-    }, [])
+	getDevices(); 
+   }, [])
+
+    function getDevices() {
+	NetworkService.getNetworkDevices()
+	.then(res => {
+		console.log(res);
+		setDevices(res);
+	})
+	.catch(err => console.log(err));
+    }
 
     function selectDevice(device) {
         console.log(device);
         setDevice(device);
     }
+
     return (
     <div>
-        <CustomSidebar devices={devices} onSelect={selectDevice} selected={device}/>
+        <CustomSidebar devices={devices} onSelect={selectDevice} selected={device} onRefreshClick={getDevices}/>
         <Sidebar.Pusher>
             <Router device={device} />   
         </Sidebar.Pusher>
