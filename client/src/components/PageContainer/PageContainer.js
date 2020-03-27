@@ -7,7 +7,7 @@ const Container = styled.div`
     border-right: 1px solid #a2a2a2;
     border-left: 1px solid #a2a2a2;
     background-color: #ebebeb;
-    height:100vh;
+    height:100%;
 `;
 const PageContainer = (props) => {
     return (

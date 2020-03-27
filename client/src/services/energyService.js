@@ -23,9 +23,14 @@ const getWemos = () => {
     .catch(err => console.log(err))
 }
 
+const test = () => {
+
+}
+
 const EnergyService = {
     getEnergy,
-    getWemos
+    getWemos,
+    test
 }
 
 export default EnergyService;

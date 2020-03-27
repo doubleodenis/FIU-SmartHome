@@ -1,7 +1,8 @@
 import React, {useState, useEffect} from "react";
 import PageContainer from "../components/PageContainer/PageContainer";
-import LineChart from "../components/LineChart/LineChart";
+import LineChart from "../components/EnergyChart/EnergyChart";
 import EnergyService from "../services/energyService";
+import NetworkService from "../services/networkService";
 import OccupancyChart from "../components/OccupancyChart/OccupancyChart";
 import NetworkChart from "../components/NetworkChart/NetworkChart";
 import CustomDropdown from "../components/CustomDropdown/CustomDropdown";
@@ -23,19 +24,13 @@ function getEnergy(setter) {
 
 const Home = (props) => {
     const [energy, setEnergy] = useState([]);
+    const [network, setNetwork] = useState([])
     const [wemos, setWemos] = useState([]);
     const [wemo, setWemo] = useState(null);
 
     //Used as componentDidMount
     useEffect(() => {
-        // const interval = setInterval(function () {
-        //     // getEnergy(setEnergy)
-        // }, 5000);
-
-        // setTimeout(function() {
-        //     clearInterval(interval);
-        // }, 15000)
-        
+        // handleTime({ value: 30 });
     }, []);
 
      //This will happen continuously (I have no idea why)
@@ -45,10 +40,10 @@ const Home = (props) => {
 
 
     let times = [
-        { text: '30m', value: '30' },
-        { text: '1h', value: '60'},
-        { text: '6h', value: '360'},
-        { text: '12h', value: '720'}
+        { text: '30m', value: 30 },
+        { text: '1h', value: 60},
+        { text: '6h', value: 360},
+        { text: '12h', value: 720}
     ]
 
     function handleWemo() {
@@ -70,14 +65,25 @@ const Home = (props) => {
             });
             setEnergy(data);
         });
+        NetworkService.getNetworkTraffic(props.device.ip_address, time.value).then(res => {
+            const data = res.map(n => { 
+                const obj = {
+                    x: new Date(n.Date),
+                    y: n.bandwidth
+                }
+                return obj;
+            });
+            setNetwork(data);
+        })
     }
 
     function test() {
-        console.log(props);
+        EnergyService.test();
     }
-    
+    //replace true with props.device.ip_address
     return true ? (
         <PageContainer style={{ }}>
+            <button onClick={test}>test</button>
             <Header as="h2">{''}</Header>
             <div style={{width: 250, height: 100}}>
                 <CustomDropdown label="Wemo" placeholder="Wemo" items={[]} onClick={handleWemo} 
@@ -87,8 +93,8 @@ const Home = (props) => {
                 <CustomDropdown label="Time" placeholder="Time" items={times} onClick={handleTime}/>
             </div>
             
-            {/* <LineChart data={energy}></LineChart> */}
-            <NetworkChart></NetworkChart>
+            <LineChart data={energy}></LineChart>
+            <NetworkChart data={network}></NetworkChart>
             <OccupancyChart></OccupancyChart>
         </PageContainer>
         ) : (

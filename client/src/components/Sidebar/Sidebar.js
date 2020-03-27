@@ -1,5 +1,5 @@
-import React, {useState} from 'react'
-import { Menu, Button, Icon, Sidebar, Divider, Container, Header } from 'semantic-ui-react'
+import React from 'react'
+import { Menu, Button, Icon, Sidebar, Divider, Header } from 'semantic-ui-react'
 
 
 const CustomSidebar = (props) => {

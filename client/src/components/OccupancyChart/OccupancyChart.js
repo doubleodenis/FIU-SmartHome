@@ -1,38 +1,76 @@
 import React from 'react';
-import { VictoryAxis, VictoryTheme, VictoryLabel} from "victory";
-
+import { Line, Bar } from 'react-chartjs-2';
+ 
 /**
  * @param  {} props.data An array of objects containing data?
  */
-const OccupancyChart = (props) => {    
-    
-    return (
-        <svg width={500} height={300} style={{marginLeft: 20}}>
-            <VictoryAxis dependentAxis
-                tickLabelComponent={<VictoryLabel dy={-10} dx={15}/>}
-                width={500}
-                height={300}
-                domain={[0, 1]}
-                theme={VictoryTheme.material}
-                standalone={false}
-                tickValues={["Occupied"]}
+const OccupancyChart = (props) => {
 
-            />
-            <VictoryAxis 
-                width={500}
-                height={300}
-                domain={[0, Date.now()]}
-                theme={VictoryTheme.material}
-                standalone={false}
-                label="Time"
-                scale={{ x: "time" }}
-                animate={{
-                    duration: 2000,
-                    easing: "bounce"
-                  }}
-            />
-        </svg>
-    )
+  const options = {
+    responsive: true,
+    maintainAspectRatio: true,
+    aspectRatio: '2',
+    tooltips: {
+      mode: 'label'
+    },
+    elements: {
+      line: {
+        fill: false
+      }
+    },
+    scales: {
+      xAxes: [
+        {
+          type: 'time',
+          distribution: 'series',
+          time: {
+            displayFormats: {
+                minute: 'h:mm a'
+            }
+          },
+          ticks: {
+            source: 'auto'
+          }
+        }
+      ],
+      yAxes: [
+        {
+          type: 'linear',
+          display: true,
+          position: 'left',
+          id: 'y-axis-1',
+          ticks: {
+            min: 0,
+            max: 1,
+          }
+        }
+      ]
+    }
+  };
+
+  const data = {
+    datasets: [{
+      type: 'line',
+      label: 'Occupancy',
+      data: [{ t: new Date(), y: 0 }, { t: 100000, y: 1 }],
+      // fill: false,
+      backgroundColor: '#f0c64a',
+      borderColor: '#f0c64a',
+      hoverBackgroundColor: '#f0c64a',
+      hoverBorderColor: '#f0c64a',
+      yAxisID: 'y-axis-1'
+    }]
+  };
+
+  return(
+    <div style={{ height: 500, width: 900}}>
+       <Bar
+      data={data} 
+      options={options} />
+
+    </div>
+    
+  )
 }
 
 export default OccupancyChart;
