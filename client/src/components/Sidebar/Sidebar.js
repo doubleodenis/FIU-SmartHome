@@ -29,7 +29,15 @@ const CustomSidebar = (props) => {
         >
             <Header as='a' href="/" style={{color: "white"}}>energy.io</Header>
             <Divider />
-            <Button compact icon labelPosition="right" onClick={props.onRefresh}>Devices<Icon name="refresh" style={{margin: "0px 10px"}}/></Button>
+            <Button
+            style={{ marginBottom: 15 }} 
+            compact 
+            icon 
+            labelPosition="right" 
+            onClick={props.onRefresh}>
+                    Devices
+                <Icon name="refresh" style={{margin: "0px 10px"}}/>
+            </Button>
             {createDeviceList(props.devices)}   
             {/* <Menu items={devices}/> */}
     </Sidebar>

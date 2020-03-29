@@ -16,6 +16,7 @@ const CustomDropdown = (props) => {
             placeholder={props.placeholder}  
             options={items}
             onClick={props.onClick}
+            defaultValue={items[0].value}
             />
         </div>
     )

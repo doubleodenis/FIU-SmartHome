@@ -39,14 +39,14 @@ router.get('/ip/:ip', async (req, res) => {
     if(ipRegex.test(req.params.ip)) {
         
         if(time) {  
-            db.query(`SELECT MAX(time) AS currentTime FROM Network ip_address=${ip}`, function(result) {
-                const latestTime = moment(new Date(result[0].currentTime)).format("'YYYY-MM-DD HH:mm:ss'");    
-                const pastTime = moment(new Date(new Date(result[0].currentTime).getTime() - (1000 * 60 * time))).format("'YYYY-MM-DD HH:mm:ss'");
+            // db.query(`SELECT MAX(time) AS currentTime FROM Network ip_address=${ip}`, function(result) {
+                const latestTime = moment(new Date()).format("'YYYY-MM-DD HH:mm:ss'");    
+                const pastTime = moment(new Date(new Date().getTime() - (1000 * 60 * time))).format("'YYYY-MM-DD HH:mm:ss'");
             
                 db.query(`SELECT * FROM Network WHERE ip_address=${ip} AND time between ${pastTime} and ${latestTime}`, function(result2) {
                     return res.status(200).send(result2);
                 });
-            });
+            // });
         } else {
             db.query(`SELECT * FROM Network WHERE ip_address=${ip}`, function(result) {
                 return res.status(200).send(result);

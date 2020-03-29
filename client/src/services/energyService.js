@@ -6,8 +6,8 @@ const hostname = process.env.PORT ? "http://localhost:" + process.env.PORT : "ht
  * @param  {Number} time in minutes
  */
 
-const getEnergy = (time) => {
-    return axios.get(`${hostname}/energy?time=${time}`, {
+const getEnergy = (wemoSerialNum, time) => {
+    return axios.get(`${hostname}/energy/wemo/${wemoSerialNum}?time=${time}`, {
         headers:{    
         },
     })
@@ -23,14 +23,10 @@ const getWemos = () => {
     .catch(err => console.log(err))
 }
 
-const test = () => {
-
-}
 
 const EnergyService = {
     getEnergy,
-    getWemos,
-    test
+    getWemos
 }
 
 export default EnergyService;

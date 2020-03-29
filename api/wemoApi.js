@@ -17,14 +17,14 @@ router.get('/', async (req, res) => {
     const time = req.query.time;
 
     if(time) {  
-        db.query(`SELECT MAX(Date) AS currentDate FROM Energy`, function(result) {
-            const latestDate = moment(new Date(result[0].currentDate)).format("'YYYY-MM-DD HH:mm:ss'");    
-            const pastTime = moment(new Date(new Date(result[0].currentDate).getTime() - (1000 * 60 * time))).format("'YYYY-MM-DD HH:mm:ss'");
+        // db.query(`SELECT MAX(Date) AS currentDate FROM Energy`, function(result) {
+            const latestTime = moment(new Date()).format("'YYYY-MM-DD HH:mm:ss'");    
+            const pastTime = moment(new Date(new Date().getTime() - (1000 * 60 * time))).format("'YYYY-MM-DD HH:mm:ss'");
         
-            db.query(`SELECT * FROM Energy WHERE Date between ${pastTime} and ${latestDate}`, function(result2) {
+            db.query(`SELECT * FROM Energy WHERE Date between ${pastTime} and ${latestTime}`, function(result2) {
                 return res.status(200).send(result2);
             });
-        });
+        // });
     } else {
         db.query('SELECT * FROM `Energy`', function(result) {
             return res.status(200).send(result);
@@ -33,27 +33,28 @@ router.get('/', async (req, res) => {
 })
 
 router.get('/wemo/:wemo', async (req, res) => {
-    console.log('GET /energy');
+    console.log('GET /energy/wemo/:wemo');
     //get query parameters
     const time = req.query.time;
     const wemo = req.params.wemo;
     if(time) {  
-        db.query(`SELECT MAX(Date) AS currentDate FROM Energy WHERE device_Serial_number=${wemo}`, function(result) {
-            const latestDate = moment(new Date(result[0].currentDate)).format("'YYYY-MM-DD HH:mm:ss'");    
-            const pastTime = moment(new Date(new Date(result[0].currentDate).getTime() - (1000 * 60 * time))).format("'YYYY-MM-DD HH:mm:ss'");
+        // db.query(`SELECT MAX(Date) AS currentDate FROM Energy WHERE device_Serial_number=${wemo}`, function(result) {
+            const latestTime = moment(new Date()).format("'YYYY-MM-DD HH:mm:ss'");    
+            const pastTime = moment(new Date(new Date().getTime() - (1000 * 60 * time))).format("'YYYY-MM-DD HH:mm:ss'");
         
-            db.query(`SELECT * FROM Energy WHERE Date between ${pastTime} and ${latestDate}`, function(result2) {
+            db.query(`SELECT * FROM Energy WHERE Date between ${pastTime} and ${latestTime} WHERE device_Serial_number=${wemo}`, function(result2) {
                 return res.status(200).send(result2);
             });
-        });
+        // });
     } else {
         db.query('SELECT * FROM `Energy`', function(result) {
             return res.status(200).send(result);
         });
     }
-})
+});
+
 router.get('/devices', async (req, res) => {
-    console.log('GET /energy/wemo/devices');
+    console.log('GET /energy/devices');
     if(req.query.user) {
         db.query(`SELECT DISTINCT device_name, device_Serial_number FROM Energy WHERE user_id=${req.query.user}`, function(result) {
             return res.status(200).send(result);

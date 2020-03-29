@@ -7,7 +7,7 @@ const hostname = process.env.PORT ? "http://localhost:" + process.env.PORT : "ht
  * @param  {Number} time in minutes
  */
 
-const getBandwidth = (ip, time) => {
+const getNetworkTraffic = (ip, time) => {
     return axios.get(`${hostname}/network/ip/${ip}?time=${time}`, {
         headers:{    
         },
@@ -25,7 +25,7 @@ const getNetworkDevices = () => {
 }
 
 const NetworkService = {
-    getBandwidth,
+    getNetworkTraffic,
     getNetworkDevices
 }
 
