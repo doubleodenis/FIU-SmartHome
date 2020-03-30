@@ -9,27 +9,32 @@ import CustomDropdown from "../components/CustomDropdown/CustomDropdown";
 import { Header, Icon } from "semantic-ui-react";
 
 const Home = (props) => {
-   const [selectedDevice, setDevice] = useState(null);
-	 const [energy, setEnergy] = useState([]);
-    const [network, setNetwork] = useState([])
-    const [wemos, setWemos] = useState([]);
-    const [wemo, setWemo] = useState(null);
-
+   const [selectedDevice, setDevice] = useState(null); //state from props
+    const [energy, setEnergy] = useState([]); //Energy chart
+    const [network, setNetwork] = useState([]); //Network chart
+    const [wemos, setWemos] = useState([]); //wemo list
+    const [wemo, setWemo] = useState(null); 
+    const [time, setTime] = useState({ value: 30 }); //time dropdown value
     //Used as componentDidMount
     useEffect(() => {
-	setDevice(props.device.ip_address);
+        
+	    setDevice(props.device.ip_address);
         EnergyService.getWemos().then(res => {
             console.log("Wemos: ", res);
-		const result = res.map(row => {
-			return { text: row.device_name + ' ' + row.device_Serial_number, 
-				value: row.device_Serial_number }
+		    const result = res.map(row => {
+                return { text: row.device_name + ' ' + row.device_Serial_number, 
+                    value: row.device_Serial_number }
 			});
-		setWemos(result);
+		    setWemos(result);
         })
         .catch(err => console.log(err));
 
-       // handleTime({ value: 30 });
     }, [props.device]);
+
+    //When wemo and time change
+    useEffect(() => {
+        updateCharts(wemo, time);
+    }, [wemo, time]);
 
     let times = [
         { text: '30m', value: 30 },
@@ -38,12 +43,22 @@ const Home = (props) => {
         { text: '12h', value: 720}
     ]
 
-    function handleWemo(wemo) {
-        setWemo(wemo);
-        console.log(wemo);
+    function handleWemo(event, data) {
+        setWemo(data);
+        console.log("Wemo:", data);
+    }
+    
+    function handleTime(event, data) {
+        setTime(data);
+        console.log("Time:", data);
     }
 
-    function handleTime(wemo, time) {
+    function updateCharts(wemo, time) {
+        if(!wemo && !time) {
+            console.log("Missing Wemo or Time value");
+            return;
+        }
+
         EnergyService.getEnergy(wemo.value, time.value).then(res => {
             console.log(res);
             const data = res.map(e => { 
@@ -55,11 +70,13 @@ const Home = (props) => {
             });
             setEnergy(data);
         });
-        NetworkService.getNetworkTraffic(props.device.ip_address, time.value).then(res => {
+
+        NetworkService.getNetworkTraffic(selectedDevice, time.value).then(res => {
+            console.log(res);
             const data = res.map(n => { 
                 const obj = {
                     x: new Date(n.Date),
-                    y: n.bandwidth
+                    y: 'n.bandwidth'
                 }
                 return obj;
             });
@@ -74,7 +91,6 @@ const Home = (props) => {
         marginRight: 15
     }
 
-    //replace true with props.device.ip_address
     return selectedDevice ? (
         <PageContainer style={{ }}>
             <Header as="h2">{selectedDevice}</Header>
