@@ -8,7 +8,7 @@ import NetworkService from "./services/networkService"
 
 function App() {
     const [devices, setDevices] = useState([]);
-    const [device, setDevice] = useState(null);
+    const [device, setDevice] = useState({});
     
 
     //Called as OnComponentDidMount
@@ -19,7 +19,7 @@ function App() {
     function getDevices() {
 	NetworkService.getNetworkDevices()
 	.then(res => {
-		console.log(res);
+		console.log("Network devices:", res);
 		setDevices(res);
 	})
 	.catch(err => console.log(err));

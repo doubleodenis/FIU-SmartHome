@@ -17,16 +17,16 @@ connection.connect(function(err) {
 });
 
 
-function query(q, callback) {
+function query(sql, callback) {
     connection.execute(sql,  function(err, results, fields) {
-    console.log(results); 
+    	callback(results); 
   }
 );
 }
 
 function insert(sql, callback) {
     connection.execute(sql,  function(err, results, fields) {
-    console.log(results); 
+   // console.log(results); 
   }
 );
 }

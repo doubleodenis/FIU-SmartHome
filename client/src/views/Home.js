@@ -9,21 +9,27 @@ import CustomDropdown from "../components/CustomDropdown/CustomDropdown";
 import { Header, Icon } from "semantic-ui-react";
 
 const Home = (props) => {
-    const [energy, setEnergy] = useState([]);
+   const [selectedDevice, setDevice] = useState(null);
+	 const [energy, setEnergy] = useState([]);
     const [network, setNetwork] = useState([])
     const [wemos, setWemos] = useState([]);
     const [wemo, setWemo] = useState(null);
 
     //Used as componentDidMount
     useEffect(() => {
-
+	setDevice(props.device.ip_address);
         EnergyService.getWemos().then(res => {
-            console.log("Device: ", res);
+            console.log("Wemos: ", res);
+		const result = res.map(row => {
+			return { text: row.device_name + ' ' + row.device_Serial_number, 
+				value: row.device_Serial_number }
+			});
+		setWemos(result);
         })
         .catch(err => console.log(err));
 
-        handleTime({ value: 30 });
-    }, []);
+       // handleTime({ value: 30 });
+    }, [props.device]);
 
     let times = [
         { text: '30m', value: 30 },
@@ -37,7 +43,7 @@ const Home = (props) => {
         console.log(wemo);
     }
 
-    function handleTime(time) {
+    function handleTime(wemo, time) {
         EnergyService.getEnergy(wemo.value, time.value).then(res => {
             console.log(res);
             const data = res.map(e => { 
@@ -69,9 +75,9 @@ const Home = (props) => {
     }
 
     //replace true with props.device.ip_address
-    return props.device.ip_address ? (
+    return selectedDevice ? (
         <PageContainer style={{ }}>
-            <Header as="h2">{props.device.ip_address}</Header>
+            <Header as="h2">{selectedDevice}</Header>
             <div>
                 <div style={dropdownStyle}>
                     <CustomDropdown label="Wemo" placeholder="Wemo" items={wemos} onClick={handleWemo} 

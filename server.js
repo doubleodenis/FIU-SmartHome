@@ -1,7 +1,7 @@
 const express = require("express");
 const cors = require('cors');
 const bodyParser = require("body-parser");
-// const wemo = require("./scripts/EnergyUsageWemo")
+const wemo = require("./scripts/EnergyUsageWemo")
 const db = require("./connection")
 const network = require("./scripts/network");
 const app = express();
@@ -47,8 +47,3 @@ app.listen(PORT, function() {
 // });
 
 const net = network.startNetworkTracking();
-
-//List of devices
-setTimeout(function () {
-    console.log("Devices:", net.devices);
-}, 5000);

@@ -64,7 +64,8 @@ router.get('/devices', async (req, res) => {
     console.log('GET /network/devices');
     if(req.query.user) {
         db.query(`SELECT DISTINCT ip_address FROM Network WHERE user_id=${req.query.user}`, function(result) {
-            return res.status(200).send(result);
+            	console.log("Sending devices: ", result);
+		return res.status(200).send(result);
         });
     }
     else {
