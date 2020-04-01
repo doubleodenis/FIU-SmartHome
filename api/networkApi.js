@@ -40,11 +40,13 @@ router.get('/ip/:ip', async (req, res) => {
         
         if(time) {  
             // db.query(`SELECT MAX(time) AS currentTime FROM Network ip_address=${ip}`, function(result) {
-                const latestTime = moment(new Date()).format("'YYYY-MM-DD HH:mm:ss'");    
+                console.log(new Date().getTime());
+	         const latestTime = moment(new Date()).format("'YYYY-MM-DD HH:mm:ss'");    
                 const pastTime = moment(new Date(new Date().getTime() - (1000 * 60 * time))).format("'YYYY-MM-DD HH:mm:ss'");
-            
-                db.query(`SELECT * FROM Network WHERE ip_address=${ip} AND time between ${pastTime} and ${latestTime}`, function(result2) {
-                    return res.status(200).send(result2);
+                db.query(`SELECT * FROM Network`, function (result) { console.log(result) });
+                db.query(`SELECT * FROM Network WHERE ip_address=${ip} AND time between ${pastTime} and ${latestTime}`, function(results) {
+                    console.log(results);
+		    return res.status(200).send(results);
                 });
             // });
         } else {

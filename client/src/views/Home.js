@@ -14,7 +14,7 @@ const Home = (props) => {
     const [network, setNetwork] = useState([]); //Network chart
     const [wemos, setWemos] = useState([]); //wemo list
     const [wemo, setWemo] = useState(null); 
-    const [time, setTime] = useState({ value: 30 }); //time dropdown value
+    const [time, setTime] = useState(30); //time dropdown value
     //Used as componentDidMount
     useEffect(() => {
         
@@ -22,7 +22,7 @@ const Home = (props) => {
         EnergyService.getWemos().then(res => {
             console.log("Wemos: ", res);
 		    const result = res.map(row => {
-                return { text: row.device_name + ' ' + row.device_Serial_number, 
+                return { text: row.device_name + ' | ' + row.device_Serial_number, 
                     value: row.device_Serial_number }
 			});
 		    setWemos(result);
@@ -43,44 +43,50 @@ const Home = (props) => {
         { text: '12h', value: 720}
     ]
 
-    function handleWemo(event, data) {
-        setWemo(data);
-        console.log("Wemo:", data);
+    function handleWemo(event, {value}) {
+        setWemo(value);
+        console.log("Wemo:", value);
     }
     
-    function handleTime(event, data) {
-        setTime(data);
-        console.log("Time:", data);
+    function handleTime(event, {value}) {
+        setTime(value);
+        console.log("Time:", value);
+	updateCharts(wemo, time);
     }
 
     function updateCharts(wemo, time) {
-        if(!wemo && !time) {
+       console.log(wemo, time);
+	 if(!wemo || !time) {
             console.log("Missing Wemo or Time value");
             return;
         }
 
-        EnergyService.getEnergy(wemo.value, time.value).then(res => {
+        EnergyService.getEnergy(wemo, time).then(res => {
             console.log(res);
-            const data = res.map(e => { 
-                const obj = {
-                    x: new Date(e.Date),
-                    y: e.Energy
-                }
-                return obj;
-            });
-            setEnergy(data);
+	    if(res) {
+            	const data = res.map(e => { 
+                    const obj = {
+                       x: new Date(e.Date),
+                       y: e.Energy
+                   }
+                   return obj;
+               });
+               setEnergy(data);
+	   }
         });
 
-        NetworkService.getNetworkTraffic(selectedDevice, time.value).then(res => {
+        NetworkService.getNetworkTraffic(selectedDevice, time).then(res => {
             console.log(res);
-            const data = res.map(n => { 
+            if(res) {
+     	     const data = res.map(n => { 
                 const obj = {
-                    x: new Date(n.Date),
-                    y: 'n.bandwidth'
-                }
-                return obj;
-            });
-            setNetwork(data);
+                     x: new Date(n.Date),
+                     y: 'n.bandwidth'
+                  }
+                  return obj;
+               });
+               setNetwork(data);
+	    }
         })
     }
 

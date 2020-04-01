@@ -15,7 +15,7 @@ const CustomDropdown = (props) => {
             selection
             placeholder={props.placeholder}  
             options={items}
-            onClick={props.onClick}
+            onChange={props.onClick}
             defaultValue={items[0].value}
             />
         </div>

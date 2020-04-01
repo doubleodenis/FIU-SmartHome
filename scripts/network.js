@@ -6,11 +6,6 @@ const moment = require("moment");
 devices = [];
 
 function startNetworkTracking() {
-  //Add ips to device list
-  function addDevice(device) {
-    const d = device.split(":")[0]; //Remove port from ip
-    if (!devices.includes(d)) devices.push(d);
-  }
   pcap_session = pcap.createSession("wlan0", { filter: "ip proto \\tcp" });
 
   // listen for packets, decode them, and feed TCP to the tracker
@@ -31,17 +26,6 @@ function startNetworkTracking() {
         " and " +
         session.dst_name
     );
-
-    let localDeviceIsSrc = null;
-
-    //Adding device to network list if part of AP domain
-    if (session.src.substring(0, 8) === "10.3.141") {
-      addDevice(session.src);
-      localDeviceIsSrc = true;
-    } else if (session.dst.substring(0, 8) === "10.3.141") {
-      addDevice(session.dst);
-      localDeviceIsSrc = false;
-    }
 
     session.on("end", function(session) {
       const sent_bytes = session.send_bytes_payload;
