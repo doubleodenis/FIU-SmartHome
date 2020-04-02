@@ -46,6 +46,7 @@ const Home = (props) => {
     function handleWemo(event, {value}) {
         setWemo(value);
         console.log("Wemo:", value);
+	updateCharts(wemo, time);
     }
     
     function handleTime(event, {value}) {

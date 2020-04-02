@@ -42,7 +42,7 @@ router.get('/wemo/:wemo', async (req, res) => {
             const latestTime = moment(new Date()).format("'YYYY-MM-DD HH:mm:ss'");    
             const pastTime = moment(new Date(new Date().getTime() - (1000 * 60 * time))).format("'YYYY-MM-DD HH:mm:ss'");
         
-            db.query(`SELECT * FROM Energy WHERE Date between ${pastTime} and ${latestTime} WHERE device_Serial_number=${wemo}`, function(result2) {
+            db.query(`SELECT * FROM Energy WHERE device_Serial_number='${wemo}' AND Date between ${pastTime} and ${latestTime}`, function(result2) {
                 return res.status(200).send(result2);
             });
         // });
