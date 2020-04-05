@@ -41,18 +41,24 @@ const EnergyChart = (props) => {
           id: 'y-axis-1',
           ticks: {
             min: 0,
-            max: 50,
+            max: 2000,
           }
         }
       ]
     }
   };
-
+  let dataset = [];
+  if(props.data) {
+	//dataset = props.data.map(e => {
+	//	return  { t: e.date, y: e.energy };
+	//	});
+	dataset = props.data;
+  }
   const data = {
     datasets: [{
       type: 'line',
       label: 'Energy (kw) ?',
-      data: [{ t: new Date(), y: 30 }, { t: 100000, y: 32 }],
+      data: dataset,
       // fill: false,
       backgroundColor: '#13bd19',
       borderColor: '#13bd19',

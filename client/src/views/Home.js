@@ -39,20 +39,19 @@ const Home = (props) => {
     let times = [
         { text: '30m', value: 30 },
         { text: '1h', value: 60},
+	{ text: '3h', value: 180},
         { text: '6h', value: 360},
         { text: '12h', value: 720}
     ]
 
     function handleWemo(event, {value}) {
         setWemo(value);
-        console.log("Wemo:", value);
 	updateCharts(wemo, time);
     }
     
     function handleTime(event, {value}) {
         setTime(value);
-        console.log("Time:", value);
-	updateCharts(wemo, time);
+        updateCharts(wemo, time);
     }
 
     function updateCharts(wemo, time) {
@@ -66,11 +65,10 @@ const Home = (props) => {
             console.log(res);
 	    if(res) {
             	const data = res.map(e => { 
-                    const obj = {
-                       x: new Date(e.Date),
-                       y: e.Energy
+                     return {
+                       x: new Date(e.date),
+                       y: e.energy
                    }
-                   return obj;
                });
                setEnergy(data);
 	   }
@@ -79,14 +77,14 @@ const Home = (props) => {
         NetworkService.getNetworkTraffic(selectedDevice, time).then(res => {
             console.log(res);
             if(res) {
-     	     const data = res.map(n => { 
+     	    /* const data = res.map(n => { 
                 const obj = {
                      x: new Date(n.Date),
                      y: 'n.bandwidth'
                   }
                   return obj;
-               });
-               setNetwork(data);
+               });*/
+               setNetwork(res);
 	    }
         })
     }
