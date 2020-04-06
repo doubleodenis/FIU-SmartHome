@@ -108,8 +108,8 @@ const Home = (props) => {
                     <CustomDropdown label="Time" placeholder="Time" items={times} onClick={handleTime}/>
                 </div>
             </div>
-            <LineChart data={energy}></LineChart>
-            <NetworkChart data={network}></NetworkChart>
+            <LineChart data={energy} time={time}></LineChart>
+            <NetworkChart data={network} time={time}></NetworkChart>
             <OccupancyChart></OccupancyChart>
         </PageContainer>
         ) : (

@@ -1,11 +1,14 @@
 import React from 'react';
 import { Line, Bar } from 'react-chartjs-2';
- 
+import moment from 'moment'; 
 /**
  * @param  {} props.data An array of objects containing data?
  */
 const NetworkChart = (props) => {
-
+  let minTime = null;
+  if(props.time) {
+	minTime = moment(Date.now()).subtract(props.time, 'minute');
+  }
   const options = {
     responsive: true,
     maintainAspectRatio: true,
@@ -22,14 +25,13 @@ const NetworkChart = (props) => {
       xAxes: [
         {
           type: 'time',
-          distribution: 'series',
+          distribution: 'linear',
           time: {
+	    unit: 'minute',
+	    stepSize: 10,
             displayFormats: {
                 minute: 'h:mm a'
             }
-          },
-          ticks: {
-            source: 'auto'
           }
         }
       ],
@@ -41,7 +43,7 @@ const NetworkChart = (props) => {
           id: 'y-axis-1',
           ticks: {
             min: 0,
-            max: 15000,
+            max: 100000,
           }
         },
 	{
@@ -51,7 +53,7 @@ const NetworkChart = (props) => {
 	  id: 'y-axis-2',
 	  ticks: {
 	    min: 0,
-	    max: 5000,
+	    max: 100000
 	  }
 	}
       ]
@@ -69,16 +71,33 @@ const NetworkChart = (props) => {
 	});
   }
 
+  function createLabels() {
+	if(props.time) {
+		let labels = [], i = props.time, time = moment(Date.now());
+		while(i > 0) {
+			labels.push(time.subtract(i, 'minute').format('h:mm a'));
+			i -= 10; //step size
+		}
+		console.log(labels);
+		return labels;
+	}
+	else {
+		return null;
+	}
+  }
+
   const data = {
     datasets: [{
       type: 'line',
       label: 'Received Bytes',
+      //labels: createLabels(),
       data: receivedData,
       backgroundColor: '#4a8af0',
       borderColor: '#4a8af0',
       hoverBackgroundColor: '#4a8af0',
       hoverBorderColor: '#4a8af0',
-      yAxisID: 'y-axis-1'
+      yAxisID: 'y-axis-1',
+      spanGaps: true
     }, {
       type: 'line',
       label: 'Sent Bytes',
@@ -87,7 +106,8 @@ const NetworkChart = (props) => {
       borderColor: '#2948cf',
       hoverBackgroundColor: '#2948cf',
       hoverBorderColor: '#2948cf',
-      yAxisID: 'y-axis-2'
+      yAxisID: 'y-axis-2',
+      spanGaps: true
     }]
   };
 

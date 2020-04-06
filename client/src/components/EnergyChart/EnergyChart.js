@@ -22,14 +22,13 @@ const EnergyChart = (props) => {
       xAxes: [
         {
           type: 'time',
-          distribution: 'series',
+          distribution: 'linear',
           time: {
+	    unit: 'minute',
+	    stepSize: 10,
             displayFormats: {
                 minute: 'h:mm a'
             }
-          },
-          ticks: {
-            source: 'auto'
           }
         }
       ],
@@ -57,7 +56,7 @@ const EnergyChart = (props) => {
   const data = {
     datasets: [{
       type: 'line',
-      label: 'Energy (kw) ?',
+      label: 'Energy (W)',
       data: dataset,
       // fill: false,
       backgroundColor: '#13bd19',
