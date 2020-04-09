@@ -18,7 +18,10 @@ const NetworkChart = (props) => {
     },
     elements: {
       line: {
-        fill: false
+        fill: false,
+	tension: 0,
+	stepped: false,
+	borderDash: []
       }
     },
     scales: {
@@ -28,7 +31,7 @@ const NetworkChart = (props) => {
           distribution: 'linear',
           time: {
 	    unit: 'minute',
-	    stepSize: 10,
+	    stepSize: 5,
             displayFormats: {
                 minute: 'h:mm a'
             }

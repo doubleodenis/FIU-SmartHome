@@ -3,31 +3,6 @@ const router = express.Router();
 const db = require("../connection");
 const moment = require("moment");
 
-/*
-    Fetches real time energy data for the past {time} minutes.
-    If no params, fetch all data.
-*/
-router.get('/', async (req, res) => {
-    console.log('GET /network');
-    //get query parameters
-    const time = req.query.time;
-
-    if(time) {  
-        db.query(`SELECT MAX(Date) AS currentDate FROM Network`, function(result) {
-            const latestDate = moment(new Date(result[0].currentDate)).format("'YYYY-MM-DD HH:mm:ss'");    
-            const pastTime = moment(new Date(new Date(result[0].currentDate).getTime() - (1000 * 60 * time))).format("'YYYY-MM-DD HH:mm:ss'");
-        
-            db.query(`SELECT * FROM Network WHERE Date between ${pastTime} and ${latestDate}`, function(result2) {
-                return res.status(200).send(result2);
-            });
-        });
-    } else {
-        db.query('SELECT * FROM `Network`', function(result) {
-            return res.status(200).send(result);
-        });
-    }
-});
-
 //Get network data for a cetrtain ip
 router.get('/ip/:ip', async (req, res) => {
     console.log('GET /network/ip/:ip');
@@ -41,13 +16,13 @@ router.get('/ip/:ip', async (req, res) => {
         if(time) {  
             // db.query(`SELECT MAX(time) AS currentTime FROM Network ip_address=${ip}`, function(result) {
                
-	         const latestTime = moment(new Date()).format("'YYYY-MM-DD HH:mm:ss'");    
-                const pastTime =  moment(new Date(new Date().getTime() - (1000 * 60 * time))).format("'YYYY-MM-DD HH:mm:ss'");
+	        const latestTime = moment().format("'YYYY-MM-DD HH:mm:ss'");
+                const pastTime =  moment().subtract(time, 'minute').format("'YYYY-MM-DD HH:mm:ss'");
                 const between = pastTime + " and " + latestTime;
-		//db.query(`SELECT * FROM Network`, function(results) { console.log(results);});
+		
                 db.query(`SELECT * FROM Network WHERE ip_address='${ip}' AND time between ${between}`, function(results) {
-                    console.log(results);
-		    return res.status(200).send(results);
+                    const data = parseData(results, time);
+		    return res.status(200).send(data);
                 });
             // });
         } else {
@@ -62,20 +37,48 @@ router.get('/ip/:ip', async (req, res) => {
     
 })
 
+//result is an array, totalTime is a Number
+function parseData(result, totalTime) {
+	let res = [], startTime = moment().subtract(totalTime, 'minute').seconds(0);
+	const data = result.length > 0 ? result[0] : null; //rows: ip_address, user_id, id_network, time, received_bytes, sent_bytes
+	
+	for(let i = 0; i < totalTime; i++) {
+
+		let currentTime = startTime.clone().add(i, 'minute');
+		let foundRows = result.filter(row => currentTime.isSame(moment(row.time), 'hour') && currentTime.isSame(moment(row.time), 'minute'));
+
+		if(foundRows.length > 0) {
+			let totalReceived = 0, totalSent = 0;
+			//Average the traffic by minute
+			foundRows.forEach(row => {
+				totalReceived += row.received_bytes;
+				totalSent += row.sent_bytes;
+			});
+			res.push({ ...data, time: currentTime.format("YYYY-MM-DD HH:mm:ss"), received_bytes: totalReceived/foundRows.length, sent_bytes: totalSent/foundRows.length });
+		}
+		else res.push({ ...data, time: currentTime.format("YYYY-MM-DD HH:mm:ss"), received_bytes: 0, sent_bytes: 0 });
+	}
+	return res;
+}
+
 //Get all devices from a certain user : ?user=[user]
 router.get('/devices', async (req, res) => {
     console.log('GET /network/devices');
     if(req.query.user) {
         db.query(`SELECT DISTINCT ip_address FROM Network WHERE user_id=${req.query.user}`, function(result) {
-            	console.log("Sending devices: ", result);
 		return res.status(200).send(result);
         });
     }
     else {
         db.query(`SELECT DISTINCT ip_address FROM Network`, function(result) {
-            return res.status(200).send(result);
+	    const filtered = [];
+		result.forEach(row => {
+			if(row.ip_address.startsWith('10.3.141')) filtered.push(row);
+		})
+            return res.status(200).send(filtered);
         }); 
     }
     
 })
 module.exports = router;
+

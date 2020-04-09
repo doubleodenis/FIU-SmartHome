@@ -15,7 +15,10 @@ const EnergyChart = (props) => {
     },
     elements: {
       line: {
-        fill: false
+        fill: false,
+	tension: 0,
+	stepped: false,
+	borderDash: []
       }
     },
     scales: {
@@ -25,7 +28,7 @@ const EnergyChart = (props) => {
           distribution: 'linear',
           time: {
 	    unit: 'minute',
-	    stepSize: 10,
+	    stepSize: 5,
             displayFormats: {
                 minute: 'h:mm a'
             }
@@ -40,7 +43,8 @@ const EnergyChart = (props) => {
           id: 'y-axis-1',
           ticks: {
             min: 0,
-            max: 2000,
+            max: 5000,
+	    stepSize: 500
           }
         }
       ]
@@ -48,9 +52,6 @@ const EnergyChart = (props) => {
   };
   let dataset = [];
   if(props.data) {
-	//dataset = props.data.map(e => {
-	//	return  { t: e.date, y: e.energy };
-	//	});
 	dataset = props.data;
   }
   const data = {
@@ -76,16 +77,6 @@ const EnergyChart = (props) => {
     </div>
     
   )
-    // return (
-    //   <Line   
-    //   // ref={props.ref}
-    //   options={options}
-    //   data={data} 
-    //   width={750}
-    //   height={400}
-      
-    //   />
-    // )
 }
 
 export default EnergyChart;
