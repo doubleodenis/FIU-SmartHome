@@ -3,6 +3,7 @@ import PageContainer from "../components/PageContainer/PageContainer";
 import LineChart from "../components/EnergyChart/EnergyChart";
 import EnergyService from "../services/energyService";
 import NetworkService from "../services/networkService";
+import OccupancyService from "../services/occupancyService"
 import OccupancyChart from "../components/OccupancyChart/OccupancyChart";
 import NetworkChart from "../components/NetworkChart/NetworkChart";
 import CustomDropdown from "../components/CustomDropdown/CustomDropdown";
@@ -13,16 +14,17 @@ const Home = (props) => {
     const [energy, setEnergy] = useState([]); //Energy chart
     const [network, setNetwork] = useState([]); //Network chart
     const [wemos, setWemos] = useState([]); //wemo list
-    const [wemo, setWemo] = useState(null); 
+    const [wemo, setWemo] = useState(null);
+    const [occupancy, setOccupancy] = useState([])
     const [time, setTime] = useState(30); //time dropdown value
     //Used as componentDidMount
     useEffect(() => {
-        
+
 	    setDevice(props.device.ip_address);
         EnergyService.getWemos().then(res => {
             console.log("Wemos: ", res);
 		    const result = res.map(row => {
-                return { text: row.device_name + ' | ' + row.device_Serial_number, 
+                return { text: row.device_name + ' | ' + row.device_Serial_number,
                     value: row.device_Serial_number }
 			});
 		    setWemos(result);
@@ -48,7 +50,7 @@ const Home = (props) => {
         setWemo(value);
 	updateCharts(wemo, time);
     }
-    
+
     function handleTime(event, {value}) {
         setTime(value);
         updateCharts(wemo, time);
@@ -56,7 +58,7 @@ const Home = (props) => {
 
     function updateCharts(wemo, time) {
        console.log(wemo, time);
-	 if(!wemo || !time) {
+	      if(!wemo || !time) {
             console.log("Missing Wemo or Time value");
             return;
         }
@@ -64,7 +66,7 @@ const Home = (props) => {
         EnergyService.getEnergy(wemo, time).then(res => {
             console.log(res);
 	    if(res) {
-            	const data = res.map(e => { 
+            	const data = res.map(e => {
                      return {
                        x: new Date(e.date),
                        y: e.energy
@@ -77,7 +79,7 @@ const Home = (props) => {
         NetworkService.getNetworkTraffic(selectedDevice, time).then(res => {
             console.log(res);
             if(res) {
-     	    /* const data = res.map(n => { 
+     	    /* const data = res.map(n => {
                 const obj = {
                      x: new Date(n.Date),
                      y: 'n.bandwidth'
@@ -87,7 +89,21 @@ const Home = (props) => {
                setNetwork(res);
 	    }
         })
-    }
+
+        OccupancyService.getOccupancy(time).then(res => {
+          console.log(res)
+          if (res) {
+            const data = res.map(o => {
+              return {
+                x: new Date(o.date),
+                y: o.occupancy
+              }
+            });
+            setOccupancy(data);
+          }
+        })
+      }
+
 
     const dropdownStyle = {
         width: 250,
@@ -101,7 +117,7 @@ const Home = (props) => {
             <Header as="h2">{selectedDevice}</Header>
             <div>
                 <div style={dropdownStyle}>
-                    <CustomDropdown label="Wemo" placeholder="Wemo" items={wemos} onClick={handleWemo} 
+                    <CustomDropdown label="Wemo" placeholder="Wemo" items={wemos} onClick={handleWemo}
                     labelIcon={<Icon name="linkify" style={{margin: "0px 3px"}}/>}/>
                 </div>
                 <div style={dropdownStyle}>
@@ -110,7 +126,7 @@ const Home = (props) => {
             </div>
             <LineChart data={energy} time={time}></LineChart>
             <NetworkChart data={network} time={time}></NetworkChart>
-            <OccupancyChart></OccupancyChart>
+            <OccupancyChart data={occupancy} time ={time}></OccupancyChart>
         </PageContainer>
         ) : (
         <PageContainer>

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Line, Bar } from 'react-chartjs-2';
- 
+
 /**
  * @param  {} props.data An array of objects containing data?
  */
@@ -48,11 +48,20 @@ const OccupancyChart = (props) => {
     }
   };
 
+  let dataset = [];
+  if(props.data) {
+  //dataset = props.data.map(o => {
+  //	return  { t: o.date, y: o.energy };
+  //	});
+  dataset = props.data;
+  console.log("dataset " + dataset)
+  }
+
   const data = {
     datasets: [{
       type: 'line',
       label: 'Occupancy',
-      data: [{ t: new Date(), y: 0 }, { t: 100000, y: 1 }],
+      data: dataset,
       // fill: false,
       backgroundColor: '#f0c64a',
       borderColor: '#f0c64a',
@@ -65,11 +74,11 @@ const OccupancyChart = (props) => {
   return(
     <div style={{ height: 500, width: 900}}>
        <Bar
-      data={data} 
+      data={data}
       options={options} />
 
     </div>
-    
+
   )
 }
 

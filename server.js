@@ -36,6 +36,8 @@ app.use("/energy", energyApi);
 const networkApi = require('./api/networkApi');
 app.use("/network", networkApi);
 
+const occupancyApi = require('./api/occupancyApi');
+app.use("/occupancy", occupancyApi);
 
 app.listen(PORT, function() {
     console.log(`Server running on port ${PORT}!`);
@@ -46,4 +48,3 @@ app.listen(PORT, function() {
 //     console.log(res);
 // });
 
-const net = network.startNetworkTracking();
