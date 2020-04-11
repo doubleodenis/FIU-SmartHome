@@ -43,8 +43,10 @@ app.listen(PORT, function() {
     console.log(`Server running on port ${PORT}!`);
 });
 
+
 //id_network, user_id, received_bytes, sent bytes, ip_address, time
 // db.query('SELECT * FROM Network', function(res) {
 //     console.log(res);
 // });
 
+const net = network.startNetworkTracking();
