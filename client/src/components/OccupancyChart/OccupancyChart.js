@@ -54,7 +54,7 @@ const OccupancyChart = (props) => {
   //	return  { t: o.date, y: o.energy };
   //	});
   dataset = props.data;
-  console.log("dataset " + dataset)
+  console.log("dataset " + props.data)
   }
 
   const data = {

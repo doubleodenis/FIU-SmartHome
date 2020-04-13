@@ -2,6 +2,18 @@ var Wemo = require("wemo-client");
 var moment = require("moment");
 var wemo = new Wemo();
 var db = require("../connection");
+var occ = require('./occupancy')
+
+let tempDate = moment();
+
+const tempRemainder = 5 - (tempDate.seconds() % 5);
+tempDate = moment(tempDate)
+  .add(tempRemainder, "seconds")
+  .format("YYYY-MM-DD HH:mm:ss");
+
+
+let prevTime = tempDate
+
 
 function foundDevice(err, device) {
   if (device.deviceType === Wemo.DEVICE_TYPE.Insight) {
@@ -35,6 +47,12 @@ function foundDevice(err, device) {
       var sql = `Call 5Energy(${val})`;
       console.log(sql);
       db.insert(sql);
+      
+      if (prevTime != date){
+        occ.occupancy()
+      }
+
+      prevTime = date
     });
   }
 }
