@@ -1,28 +1,21 @@
-var moment = require("moment");
 var db = require("../connection");
-var tf = require('@tensorflow/tfjs');
-
+var tf = require("@tensorflow/tfjs");
 
 async function loadModel(data, date) {
-  const model = await tf.loadLayersModel('https://raw.githubusercontent.com/syorizzo/test/master/converted_model2/model.json')
-  const pred = model.predict(data)
-  const tensorData = pred.dataSync()
-  let occupancy = Math.round(tensorData[0] < 0 ? 0 : (tensorData[0] > 1 ? 1 : tensorData[0]))
-  let sql = `INSERT INTO Occupancy(occupancy, date, user_id) VALUES(${occupancy}, '${date}', 1)`
+  const model = await tf.loadLayersModel(
+    "https://raw.githubusercontent.com/syorizzo/test/master/converted_model2/model.json"
+  );
+  const pred = model.predict(data);
+  const tensorData = pred.dataSync();
+  let occupancy = Math.round(
+    tensorData[0] < 0 ? 0 : tensorData[0] > 1 ? 1 : tensorData[0]
+  );
+  let sql = `INSERT INTO Occupancy(occupancy, date, user_id) VALUES(${occupancy}, '${date}', 1)`;
   console.log(sql);
   db.insert(sql);
 }
 
-
-async function occupancy() {
-  let date = moment();
-
-  let remainder = date.seconds() % 10;
-  remainder = remainder === 0 ? 5 : (remainder > 5 ? remainder - 5 : remainder)
-  date = moment(date)
-    .add(-1 * remainder, "seconds")
-    .format("YYYY-MM-DD HH:mm:ss");
-
+async function occupancy(date) {
   let query = `(SELECT energy, bytes FROM (
 	(SELECT energy ,date FROM Energy e where e.user_id = 1 AND e.date = '${date}' ORDER BY id_energy  DESC LIMIT 1) as L
 	JOIN
@@ -36,18 +29,21 @@ UNION ALL
 	JOIN
 	(Select time FROM Network n2 Where n2.user_id = 1) as RR
 	ON LL.date = RR.time
-	)))ORDER BY id_energy  DESC LIMIT 1 )`
+	)))ORDER BY id_energy  DESC LIMIT 1 )`;
 
-  db.query(query,
-    function(result2) {
-      console.log(result2);
-      let result =  result2 === [] ? tf.tensor2d([[0,0]]) :tf.tensor2d([
-        [result2[0].energy, result2[0].bytes]
-      ]);
-      loadModel(result, date)
-    });
+  db.query(query, function (result2) {
+    let result = 0;
+    console.log(result2);
+    if (result2 == null || result2.length == 0) {
+      result = tf.tensor2d([[0, 0]]);
+    } else {
+      result = tf.tensor2d([[result2[0].energy, result2[0].bytes]]);
+    }
+    result.print();
+    loadModel(result, date);
+  });
 }
 
 module.exports = {
   occupancy,
-}
+};
