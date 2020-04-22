@@ -40,7 +40,7 @@ UNION ALL
     	let result = 0
     	console.log(result2)
     	if (result2 == null || result2.length == 0 ){
-    		result = tf.tensor2d([[0,0]])
+    		result = tf.tensor2d([[ (0 - meanEnergy)/stdEnergy , (0 - meanEnergy)/stdBytes]])
     	}
     	else{
     		result = tf.tensor2d([[ (result2[0].energy - meanEnergy)/stdEnergy , (result2[0].bytes - meanEnergy)/stdBytes]])
