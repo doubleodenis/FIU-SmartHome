@@ -15,21 +15,23 @@ const OccupancyChart = (props) => {
     },
     elements: {
       line: {
-        fill: false
+        fill: false,
+	tension: 0,
+	stepped: false,
+	borderDash: []
       }
     },
     scales: {
       xAxes: [
         {
           type: 'time',
-          distribution: 'series',
+          distribution: 'linear',
           time: {
+	    unit: 'minute',
+	    stepSize: 5,
             displayFormats: {
                 minute: 'h:mm a'
             }
-          },
-          ticks: {
-            source: 'auto'
           }
         }
       ],
@@ -42,6 +44,7 @@ const OccupancyChart = (props) => {
           ticks: {
             min: 0,
             max: 1,
+	    stepSize: 1
           }
         }
       ]
@@ -50,19 +53,15 @@ const OccupancyChart = (props) => {
 
   let dataset = [];
   if(props.data) {
-  //dataset = props.data.map(o => {
-  //	return  { t: o.date, y: o.energy };
-  //	});
-  dataset = props.data;
-  console.log("dataset " + props.data)
-  }
+  	dataset = props.data;
+  	console.log("dataset", dataset);
+}
 
   const data = {
     datasets: [{
       type: 'line',
       label: 'Occupancy',
       data: dataset,
-      // fill: false,
       backgroundColor: '#f0c64a',
       borderColor: '#f0c64a',
       hoverBackgroundColor: '#f0c64a',

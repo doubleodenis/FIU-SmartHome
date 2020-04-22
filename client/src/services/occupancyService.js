@@ -1,13 +1,13 @@
 import axios from 'axios'
 
-const hostname = process.env.PORT ? "http://localhost:" + process.env.PORT : "http://localhost:5050";
+const hostname = process.env.PORT ? "http://localhost:" + process.env.PORT : "http://localhost:8000";
 /**
  * Gets the Occupancy values between current time and {time} minutes ago
  * @param  {Number} time in minutes
  */
 
-const getOccupancy = (time) => {
-    return axios.get(`${hostname}/occupancy/?time=${time}`, {
+const getOccupancy = (user, time) => {
+    return axios.get(`${hostname}/occupancy/${user}?time=${time}`, {
         headers:{
         },
     })

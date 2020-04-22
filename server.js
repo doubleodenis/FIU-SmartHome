@@ -16,7 +16,7 @@ app.use(function(req, res, next) {
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
-const PORT = process.env.PORT || 5050;
+const PORT = process.env.PORT || 8000;
 process.env.NODE_ENV === "production" ? app.use(express.static("energy-io/build")) : null;
 
 // app.use("/api", apiRoutes);

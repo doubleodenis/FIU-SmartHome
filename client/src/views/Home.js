@@ -17,26 +17,43 @@ const Home = (props) => {
     const [wemo, setWemo] = useState(null);
     const [occupancy, setOccupancy] = useState([])
     const [time, setTime] = useState(30); //time dropdown value
-    //Used as componentDidMount
+    const [timer, setTimer] = useState(null); //refresh timer
+   
+     //Used as componentDidMount
     useEffect(() => {
+	console.log(props.device);
+        if(props.device.ip_address) {
 
-	    setDevice(props.device.ip_address);
-        EnergyService.getWemos().then(res => {
-            console.log("Wemos: ", res);
-		    const result = res.map(row => {
-                return { text: row.device_name + ' | ' + row.device_Serial_number,
-                    value: row.device_Serial_number }
-			});
-		    setWemos(result);
-        })
-        .catch(err => console.log(err));
+           setDevice(props.device.ip_address);
+           EnergyService.getWemos().then(res => {
+	       const result = res.map(row => {
+                   return { text: row.device_name + ' | ' + row.device_Serial_number,
+                       value: row.device_Serial_number }
+		   });
+		       setWemos(result);
+		       handleWemo(null, result[0]);
+           })
+           .catch(err => console.log(err));
+	}
 
     }, [props.device]);
 
-    //When wemo and time change
+   // useEffect(() => {
+	//begin the refresh timer on component start
+   //     refresh();
+   // }, []);
+    
     useEffect(() => {
-        updateCharts(wemo, time);
+	//update when wemo or time changes
+	refresh();
+        console.log(wemo, time);
     }, [wemo, time]);
+
+    useEffect(() => {
+	return function cleanup() {
+	   if(timer != null) clearInterval(timer);
+	}
+    });
 
     let times = [
         { text: '30m', value: 30 },
@@ -48,17 +65,24 @@ const Home = (props) => {
 
     function handleWemo(event, {value}) {
         setWemo(value);
-	updateCharts(wemo, time);
+	//refresh();
     }
 
     function handleTime(event, {value}) {
         setTime(value);
-        updateCharts(wemo, time);
+        //refresh();
     }
 
-    function updateCharts(wemo, time) {
-       console.log(wemo, time);
-	      if(!wemo || !time) {
+    function refresh() {
+	if(timer != null) clearInterval(timer);
+	updateCharts();
+	const interval = setInterval(updateCharts, 60000);
+	setTimer(interval);
+    }
+
+    function updateCharts() {
+       console.log('refreshing charts...');
+	if(!wemo || !time) {
             console.log("Missing Wemo or Time value");
             return;
         }
@@ -77,7 +101,6 @@ const Home = (props) => {
         });
 
         NetworkService.getNetworkTraffic(selectedDevice, time).then(res => {
-            console.log(res);
             if(res) {
      	    /* const data = res.map(n => {
                 const obj = {
@@ -90,7 +113,7 @@ const Home = (props) => {
 	    }
         })
 
-        OccupancyService.getOccupancy(time).then(res => {
+        OccupancyService.getOccupancy(1, time).then(res => {
           console.log(res)
           if (res) {
             const data = res.map(o => {

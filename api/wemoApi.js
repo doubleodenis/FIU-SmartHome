@@ -37,7 +37,7 @@ function parseData(result, totalTime) {
 	const deviceSerial = result.length > 0 ? result[0].device_Serial_number : null;
 	//return energy, date, device_Serial_number
 	for(let i = 0; i < totalTime; i++) {
-		let currentTime = startTime.clone().add(i, 'minute'); console.log(startTime, currentTime, i);
+		let currentTime = startTime.clone().add(i, 'minute');
 		let foundRows = result.filter(row => currentTime.isSame(moment(row.date), 'hour') && currentTime.isSame(moment(row.date), 'minute'));
 		
 		if(foundRows.length > 0) {

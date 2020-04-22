@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-const hostname = process.env.PORT ? "http://localhost:" + process.env.PORT : "http://localhost:5050";
+const hostname = process.env.PORT ? "http://localhost:" + process.env.PORT : "http://localhost:8000";
 /**
  * Gets the network bandwidth by ip between current time and {time} minutes ago
  * @param  {Number} ip ex: 192.168.1.101
