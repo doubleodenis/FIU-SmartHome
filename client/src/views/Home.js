@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from "react";
+import React, {useState, useEffect, useRef} from "react";
 import PageContainer from "../components/PageContainer/PageContainer";
 import LineChart from "../components/EnergyChart/EnergyChart";
 import EnergyService from "../services/energyService";
@@ -9,16 +9,41 @@ import NetworkChart from "../components/NetworkChart/NetworkChart";
 import CustomDropdown from "../components/CustomDropdown/CustomDropdown";
 import { Header, Icon } from "semantic-ui-react";
 
+//creating a useInterval hook (setInterval does not use updated state)
+   function useInterval(callback, delay) {
+	const savedCallback = useRef();
+	
+	//remember latest callback
+	useEffect(() => {
+	   savedCallback.current = callback;
+   	}, [callback]);
+
+	//setup the interval
+	useEffect(() => {
+	   function tick() {
+		savedCallback.current();
+	   }
+
+	   if(delay != null) {
+		let id = setInterval(tick, delay);
+		return () => clearInterval(id);
+	   }
+	}, [delay]);
+    }
+
 const Home = (props) => {
-   const [selectedDevice, setDevice] = useState(null); //state from props
+
+    const [selectedDevice, setDevice] = useState(null); //state from props
     const [energy, setEnergy] = useState([]); //Energy chart
     const [network, setNetwork] = useState([]); //Network chart
     const [wemos, setWemos] = useState([]); //wemo list
     const [wemo, setWemo] = useState(null);
     const [occupancy, setOccupancy] = useState([])
     const [time, setTime] = useState(30); //time dropdown value
-    const [timer, setTimer] = useState(null); //refresh timer
-   
+    
+    //start timer for refreshing charts
+    useInterval(updateCharts, 60000);
+
      //Used as componentDidMount
     useEffect(() => {
 	console.log(props.device);
@@ -31,62 +56,46 @@ const Home = (props) => {
                        value: row.device_Serial_number }
 		   });
 		       setWemos(result);
-		       handleWemo(null, result[0]);
+		       //handleWemo(null, result[0]);
            })
            .catch(err => console.log(err));
 	}
 
     }, [props.device]);
-
-   // useEffect(() => {
-	//begin the refresh timer on component start
-   //     refresh();
-   // }, []);
     
     useEffect(() => {
 	//update when wemo or time changes
-	refresh();
+	updateCharts();
         console.log(wemo, time);
     }, [wemo, time]);
 
-    useEffect(() => {
-	return function cleanup() {
-	   if(timer != null) clearInterval(timer);
-	}
-    });
 
     let times = [
         { text: '30m', value: 30 },
         { text: '1h', value: 60},
 	{ text: '3h', value: 180},
-        { text: '6h', value: 360},
-        { text: '12h', value: 720}
+        { text: '6h', value: 360}
     ]
 
     function handleWemo(event, {value}) {
+	//if selecting first wemo, init time frame
+	if(wemo == null) setTime(30);
+
         setWemo(value);
-	//refresh();
+	console.log(value);
     }
 
     function handleTime(event, {value}) {
         setTime(value);
-        //refresh();
-    }
-
-    function refresh() {
-	if(timer != null) clearInterval(timer);
-	updateCharts();
-	const interval = setInterval(updateCharts, 60000);
-	setTimer(interval);
     }
 
     function updateCharts() {
        console.log('refreshing charts...');
 	if(!wemo || !time) {
-            console.log("Missing Wemo or Time value");
+            console.log("Missing Wemo or Time value", wemo, time);
             return;
         }
-
+	
         EnergyService.getEnergy(wemo, time).then(res => {
             console.log(res);
 	    if(res) {
@@ -124,7 +133,7 @@ const Home = (props) => {
             });
             setOccupancy(data);
           }
-        })
+        });
       }
 
 

@@ -54,7 +54,7 @@ const OccupancyChart = (props) => {
   let dataset = [];
   if(props.data) {
   	dataset = props.data;
-  	console.log("dataset", dataset);
+  	//console.log("dataset", dataset);
 }
 
   const data = {

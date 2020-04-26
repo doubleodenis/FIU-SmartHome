@@ -32,7 +32,7 @@ function App() {
 
     return (
     <div>
-        <CustomSidebar devices={devices} onSelect={selectDevice} selected={device} onRefreshClick={getDevices}/>
+        <CustomSidebar devices={devices} onSelect={selectDevice} selected={device} onRefresh={getDevices}/>
         <Sidebar.Pusher>
             <Router device={device} />   
         </Sidebar.Pusher>
