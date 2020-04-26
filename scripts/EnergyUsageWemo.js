@@ -4,6 +4,7 @@ var wemo = new Wemo();
 var db = require("../connection");
 var occ = require("./occupancy");
 
+//Time rounded to closes 5 second interval for calling occupancy script
 let tempDate = moment();
 
 const tempRemainder = 5 - (tempDate.seconds() % 5);
@@ -13,6 +14,7 @@ tempDate = moment(tempDate)
 
 let prevTime = tempDate;
 
+//Function that continually scans for Wemo Insight devices and retrieves their current energy usage, and insert the energy data rounded to the next 5 second interval
 function foundDevice(err, device) {
   if (device.deviceType === Wemo.DEVICE_TYPE.Insight) {
     //console.log("Wemo Insight Switch found: %s", device.friendlyName);
@@ -46,6 +48,7 @@ function foundDevice(err, device) {
       console.log(sql);
       db.insert(sql);
 
+      //Call the occupancy script once the time changes to the next 5 second interval
       if (prevTime != date) {
         occ.occupancy(prevTime);
       }

@@ -5,6 +5,8 @@ const db = require("../connection");
 const moment = require("moment");
 devices = [];
 
+//Function that continually scans for tcp traffic and insert the tcp session data to the sql database. Time is rounded up to the
+//next 5 second interval, and calls a stored procedure to store the data.
 function startNetworkTracking() {
   pcap_session = pcap.createSession("wlan0", { filter: "ip proto \\tcp" });
 
