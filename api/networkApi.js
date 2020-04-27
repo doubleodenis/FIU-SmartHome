@@ -53,8 +53,13 @@ function parseData(result, totalTime) {
 			foundRows.forEach(row => {
 				totalReceived += row.received_bytes;
 				totalSent += row.sent_bytes;
+
 			});
-			res.push({ ...data, time: currentTime.format("YYYY-MM-DD HH:mm:ss"), received_bytes: totalReceived/foundRows.length, sent_bytes: totalSent/foundRows.length });
+
+			//Calculating traffic and converting to MB
+			const received = (totalReceived / foundRows.length) / 1000;
+			const sent = (totalSent / foundRows.length) / 1000;
+			res.push({ ...data, time: currentTime.format("YYYY-MM-DD HH:mm:ss"), received_bytes: received, sent_bytes: sent });
 		}
 		else res.push({ ...data, time: currentTime.format("YYYY-MM-DD HH:mm:ss"), received_bytes: 0, sent_bytes: 0 });
 	}

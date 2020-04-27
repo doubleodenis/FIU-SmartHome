@@ -46,7 +46,7 @@ const NetworkChart = (props) => {
           id: 'y-axis-1',
           ticks: {
             min: 0,
-            max: 100000,
+            max: 200,
           }
         },
 	{
@@ -56,7 +56,7 @@ const NetworkChart = (props) => {
 	  id: 'y-axis-2',
 	  ticks: {
 	    min: 0,
-	    max: 100000
+	    max: 200
 	  }
 	}
       ]
@@ -72,27 +72,12 @@ const NetworkChart = (props) => {
      receivedData = props.data.map(data => {
 	return { y: data.received_bytes, t: new Date(data.time) };
 	});
-  }
-
-  function createLabels() {
-	if(props.time) {
-		let labels = [], i = props.time, time = moment(Date.now());
-		while(i > 0) {
-			labels.push(time.subtract(i, 'minute').format('h:mm a'));
-			i -= 10; //step size
-		}
-		console.log(labels);
-		return labels;
-	}
-	else {
-		return null;
-	}
-  }
+   }
 
   const data = {
     datasets: [{
       type: 'line',
-      label: 'Received Bytes',
+      label: 'Received (MB)',
       //labels: createLabels(),
       data: receivedData,
       backgroundColor: '#4a8af0',
@@ -103,7 +88,7 @@ const NetworkChart = (props) => {
       spanGaps: true
     }, {
       type: 'line',
-      label: 'Sent Bytes',
+      label: 'Sent (MB)',
       data: sentData,
       backgroundColor: '#2948cf',
       borderColor: '#2948cf',

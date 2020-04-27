@@ -158,7 +158,7 @@ const Home = (props) => {
             </div>
             <LineChart data={energy} time={time}></LineChart>
             <NetworkChart data={network} time={time}></NetworkChart>
-            <OccupancyChart data={occupancy} time ={time}></OccupancyChart>
+            <OccupancyChart data={occupancy} time ={time} style={{paddingLeft: 10}}></OccupancyChart>
         </PageContainer>
         ) : (
         <PageContainer>
