@@ -1,6 +1,6 @@
 import React from 'react';
 import { Line, Bar } from 'react-chartjs-2';
- 
+
 /**
  * @param  {} props.data An array of objects containing data?
  */
@@ -16,9 +16,9 @@ const EnergyChart = (props) => {
     elements: {
       line: {
         fill: false,
-	tension: 0,
-	stepped: false,
-	borderDash: []
+        tension: 0,
+        stepped: false,
+        borderDash: []
       }
     },
     scales: {
@@ -27,10 +27,10 @@ const EnergyChart = (props) => {
           type: 'time',
           distribution: 'linear',
           time: {
-	    unit: 'minute',
-	    stepSize: 5,
+            unit: 'minute',
+            stepSize: 5,
             displayFormats: {
-                minute: 'h:mm a'
+              minute: 'h:mm a'
             }
           }
         }
@@ -44,22 +44,27 @@ const EnergyChart = (props) => {
           ticks: {
             min: 0,
             max: 5000,
-	    stepSize: 500
+            stepSize: 500
           }
         }
       ]
     }
   };
+
   let dataset = [];
-  if(props.data) {
-	dataset = props.data;
+  if (props.data) {
+
+    //mapping the dataset
+    dataset = props.data.map(data => {
+      return { y: data.energy, t: new Date(data.date) };
+    });
+
   }
   const data = {
     datasets: [{
       type: 'line',
       label: 'Energy (W)',
       data: dataset,
-      // fill: false,
       backgroundColor: '#13bd19',
       borderColor: '#13bd19',
       hoverBackgroundColor: '#13bd19',
@@ -68,14 +73,14 @@ const EnergyChart = (props) => {
     }]
   };
 
-  return(
-    <div style={{ height: 500, width: 900}}>
-       <Bar
-      data={data} 
-      options={options} />
+  return (
+    <div style={{ height: 500, width: 900 }}>
+      <Bar
+        data={data}
+        options={options} />
 
     </div>
-    
+
   )
 }
 

@@ -1,14 +1,8 @@
 import React from 'react';
-import { Line, Bar } from 'react-chartjs-2';
-import moment from 'moment'; 
-/**
- * @param  {} props.data An array of objects containing data?
- */
+import { Bar } from 'react-chartjs-2';
+
 const NetworkChart = (props) => {
-  let minTime = null;
-  if(props.time) {
-	minTime = moment(Date.now()).subtract(props.time, 'minute');
-  }
+
   const options = {
     responsive: true,
     maintainAspectRatio: true,
@@ -19,9 +13,9 @@ const NetworkChart = (props) => {
     elements: {
       line: {
         fill: false,
-	tension: 0,
-	stepped: false,
-	borderDash: []
+        tension: 0,
+        stepped: false,
+        borderDash: []
       }
     },
     scales: {
@@ -30,10 +24,10 @@ const NetworkChart = (props) => {
           type: 'time',
           distribution: 'linear',
           time: {
-	    unit: 'minute',
-	    stepSize: 5,
+            unit: 'minute',
+            stepSize: 5,
             displayFormats: {
-                minute: 'h:mm a'
+              minute: 'h:mm a'
             }
           }
         }
@@ -49,36 +43,37 @@ const NetworkChart = (props) => {
             max: 200,
           }
         },
-	{
-	  type: 'linear',
-	  display: false,
-	  position: 'left',
-	  id: 'y-axis-2',
-	  ticks: {
-	    min: 0,
-	    max: 200
-	  }
-	}
+        {
+          type: 'linear',
+          display: false,
+          position: 'left',
+          id: 'y-axis-2',
+          ticks: {
+            min: 0,
+            max: 200
+          }
+        }
       ]
     }
   };
 
   let sentData = [], receivedData = [];
-  if(props.data) {
-     sentData = props.data.map(data => {
-	return { y: data.sent_bytes, t: new Date(data.time) };
-	});
+  if (props.data) {
+    
+    //mapping the dataset
+    sentData = props.data.map(data => {
+      return { y: data.sent_bytes, t: new Date(data.time) };
+    });
 
-     receivedData = props.data.map(data => {
-	return { y: data.received_bytes, t: new Date(data.time) };
-	});
-   }
+    receivedData = props.data.map(data => {
+      return { y: data.received_bytes, t: new Date(data.time) };
+    });
+  }
 
   const data = {
     datasets: [{
       type: 'line',
       label: 'Received (MB)',
-      //labels: createLabels(),
       data: receivedData,
       backgroundColor: '#4a8af0',
       borderColor: '#4a8af0',
@@ -99,14 +94,15 @@ const NetworkChart = (props) => {
     }]
   };
 
-  return(
-    <div style={{ height: 500, width: 900}}>
-       <Bar
-      data={data} 
-      options={options} />
+  return (
+    <div style={{ height: 500, width: 900 }}>
+
+      <Bar
+        data={data}
+        options={options} />
 
     </div>
-    
+
   )
 }
 

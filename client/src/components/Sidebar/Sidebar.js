@@ -3,6 +3,11 @@ import { Menu, Button, Icon, Sidebar, Divider, Header } from 'semantic-ui-react'
 
 
 const CustomSidebar = (props) => {
+
+    /**
+     * Creates the device list to be shown in the left sidebar
+     * @param {Array} devices The IP addresses of the listed devices 
+     */
     function createDeviceList (devices) {
         return devices ? devices.map(device => {
             return (

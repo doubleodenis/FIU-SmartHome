@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useRef} from "react";
+import React, { useState, useEffect, useRef } from "react";
 import PageContainer from "../components/PageContainer/PageContainer";
 import LineChart from "../components/EnergyChart/EnergyChart";
 import EnergyService from "../services/energyService";
@@ -10,26 +10,26 @@ import CustomDropdown from "../components/CustomDropdown/CustomDropdown";
 import { Header, Icon } from "semantic-ui-react";
 
 //creating a useInterval hook (setInterval does not use updated state)
-   function useInterval(callback, delay) {
-	const savedCallback = useRef();
-	
-	//remember latest callback
-	useEffect(() => {
-	   savedCallback.current = callback;
-   	}, [callback]);
+function useInterval(callback, delay) {
+    const savedCallback = useRef();
 
-	//setup the interval
-	useEffect(() => {
-	   function tick() {
-		savedCallback.current();
-	   }
+    //remember latest callback
+    useEffect(() => {
+        savedCallback.current = callback;
+    }, [callback]);
 
-	   if(delay != null) {
-		let id = setInterval(tick, delay);
-		return () => clearInterval(id);
-	   }
-	}, [delay]);
-    }
+    //setup the interval
+    useEffect(() => {
+        function tick() {
+            savedCallback.current();
+        }
+
+        if (delay != null) {
+            let id = setInterval(tick, delay);
+            return () => clearInterval(id);
+        }
+    }, [delay]);
+}
 
 const Home = (props) => {
 
@@ -39,103 +39,101 @@ const Home = (props) => {
     const [wemos, setWemos] = useState([]); //wemo list
     const [wemo, setWemo] = useState(null);
     const [occupancy, setOccupancy] = useState([])
-    const [time, setTime] = useState(30); //time dropdown value
-    
+    const [time, setTime] = useState(null); //time dropdown value
+
     //start timer for refreshing charts
     useInterval(updateCharts, 60000);
 
-     //Used as componentDidMount
+    //Called when props.device changes to an actual value
     useEffect(() => {
-	console.log(props.device);
-        if(props.device.ip_address) {
 
-           setDevice(props.device.ip_address);
-           EnergyService.getWemos().then(res => {
-	       const result = res.map(row => {
-                   return { text: row.device_name + ' | ' + row.device_Serial_number,
-                       value: row.device_Serial_number }
-		   });
-		       setWemos(result);
-		       //handleWemo(null, result[0]);
-           })
-           .catch(err => console.log(err));
-	}
+        if (props.device.ip_address) {
+
+            setDevice(props.device.ip_address);
+            EnergyService.getWemos().then(res => {
+                const result = res.map(row => {
+                    return {
+                        text: row.device_name + ' | ' + row.device_Serial_number,
+                        value: row.device_Serial_number
+                    }
+                });
+                setWemos(result);
+
+            })
+            .catch(err => console.log(err));
+        }
 
     }, [props.device]);
-    
+
+    //immediately update charts when wemo or time changes
     useEffect(() => {
-	//update when wemo or time changes
-	updateCharts();
-        console.log(wemo, time);
+        updateCharts();
     }, [wemo, time]);
 
+    /**
+     * Handler for wemo dropdown.
+     * @param {*} event change event
+     * @param {*} value The value of the selected dropdown item
+     */
+    function handleWemo(event, { value }) {
 
-    let times = [
-        { text: '30m', value: 30 },
-        { text: '1h', value: 60},
-	{ text: '3h', value: 180},
-        { text: '6h', value: 360}
-    ]
-
-    function handleWemo(event, {value}) {
-	//if selecting first wemo, init time frame
-	if(wemo == null) setTime(30);
+        //if selecting first wemo, init time frame
+        if (wemo == null) setTime(30);
 
         setWemo(value);
-	console.log(value);
+        console.log(value);
+
     }
 
-    function handleTime(event, {value}) {
+    /**
+     * Handler for time dropdown.
+     * @param {*} event change event
+     * @param {*} value The value of the selected dropdown item
+     */
+    function handleTime(event, { value }) {
         setTime(value);
     }
 
+    /**
+     * Calls services to get data from the API for Energy, Network, and Occupancy.
+     */
     function updateCharts() {
-       console.log('refreshing charts...');
-	if(!wemo || !time) {
+        
+        if (!wemo || !time) {
             console.log("Missing Wemo or Time value", wemo, time);
             return;
         }
-	
-        EnergyService.getEnergy(wemo, time).then(res => {
-            console.log(res);
-	    if(res) {
-            	const data = res.map(e => {
-                     return {
-                       x: new Date(e.date),
-                       y: e.energy
-                   }
-               });
-               setEnergy(data);
-	   }
-        });
+        let promises = [];
+        //Energy service call
+        promises.push(EnergyService.getEnergy(wemo, time));
+        //Network service call
+        promises.push(NetworkService.getNetworkTraffic(selectedDevice, time));
+        //Occupancy service call - hardcoded to user 1, TODO: update this when user system is implemented
+        promises.push(OccupancyService.getOccupancy(1, time));
 
-        NetworkService.getNetworkTraffic(selectedDevice, time).then(res => {
-            if(res) {
-     	    /* const data = res.map(n => {
-                const obj = {
-                     x: new Date(n.Date),
-                     y: 'n.bandwidth'
-                  }
-                  return obj;
-               });*/
-               setNetwork(res);
-	    }
+        Promise.all(promises).then(res => {
+            //energy response
+            if(res[0]) setEnergy(res[0]);
+
+            //network response
+            if(res[1]) setNetwork(res[1]);
+
+            //occupancy response
+            if(res[2]) setOccupancy(res[2]);
+        })
+        .catch(err => {
+            console.log(err);
         })
 
-        OccupancyService.getOccupancy(1, time).then(res => {
-          console.log(res)
-          if (res) {
-            const data = res.map(o => {
-              return {
-                x: new Date(o.date),
-                y: o.occupancy
-              }
-            });
-            setOccupancy(data);
-          }
-        });
-      }
-
+    }
+    
+    //time dropdown items
+    let times = [
+        { text: '30m', value: 30 },
+        { text: '1h', value: 60 },
+        { text: '3h', value: 180 },
+        { text: '6h', value: 360 }
+    ]
 
     const dropdownStyle = {
         width: 250,
@@ -145,26 +143,26 @@ const Home = (props) => {
     }
 
     return selectedDevice ? (
-        <PageContainer style={{ }}>
+        <PageContainer style={{}}>
             <Header as="h2">{selectedDevice}</Header>
             <div>
                 <div style={dropdownStyle}>
                     <CustomDropdown label="Wemo" placeholder="Wemo" items={wemos} onClick={handleWemo}
-                    labelIcon={<Icon name="linkify" style={{margin: "0px 3px"}}/>}/>
+                        labelIcon={<Icon name="linkify" style={{ margin: "0px 3px" }} />} />
                 </div>
                 <div style={dropdownStyle}>
-                    <CustomDropdown label="Time" placeholder="Time" items={times} onClick={handleTime}/>
+                    <CustomDropdown label="Time" placeholder="Time" items={times} onClick={handleTime} />
                 </div>
             </div>
             <LineChart data={energy} time={time}></LineChart>
             <NetworkChart data={network} time={time}></NetworkChart>
-            <OccupancyChart data={occupancy} time ={time} style={{paddingLeft: 10}}></OccupancyChart>
+            <OccupancyChart data={occupancy} time={time} style={{ paddingLeft: 10 }}></OccupancyChart>
         </PageContainer>
-        ) : (
-        <PageContainer>
-            <Header>Please choose a device on the left. Or refresh if none are showing up.</Header>
-        </PageContainer>
-    )
+    ) : (
+            <PageContainer>
+                <Header>Please choose a device on the left. Or refresh if none are showing up.</Header>
+            </PageContainer>
+        )
 }
 
 export default Home;

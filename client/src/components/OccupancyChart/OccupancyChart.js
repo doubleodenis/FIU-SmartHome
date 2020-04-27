@@ -1,9 +1,6 @@
 import React from 'react';
-import { Line, Bar } from 'react-chartjs-2';
+import { Bar } from 'react-chartjs-2';
 
-/**
- * @param  {} props.data An array of objects containing data?
- */
 const OccupancyChart = (props) => {
 
   const options = {
@@ -16,9 +13,9 @@ const OccupancyChart = (props) => {
     elements: {
       line: {
         fill: false,
-	tension: 0,
-	stepped: false,
-	borderDash: []
+        tension: 0,
+        stepped: false,
+        borderDash: []
       }
     },
     scales: {
@@ -27,10 +24,10 @@ const OccupancyChart = (props) => {
           type: 'time',
           distribution: 'linear',
           time: {
-	    unit: 'minute',
-	    stepSize: 5,
+            unit: 'minute',
+            stepSize: 5,
             displayFormats: {
-                minute: 'h:mm a'
+              minute: 'h:mm a'
             }
           }
         }
@@ -44,7 +41,7 @@ const OccupancyChart = (props) => {
           ticks: {
             min: 0,
             max: 1,
-	    stepSize: 1
+            stepSize: 1
           }
         }
       ]
@@ -52,10 +49,14 @@ const OccupancyChart = (props) => {
   };
 
   let dataset = [];
-  if(props.data) {
-  	dataset = props.data;
-  	//console.log("dataset", dataset);
-}
+  if (props.data) {
+
+    //mapping the dataset
+    dataset = props.data.map(data => {
+      return { y: data.occupancy, t: new Date(data.date) };
+    });
+
+  }
 
   const data = {
     datasets: [{
@@ -70,11 +71,11 @@ const OccupancyChart = (props) => {
     }]
   };
 
-  return(
-    <div style={{ height: 500, width: 900}}>
-       <Bar
-      data={data}
-      options={options} />
+  return (
+    <div style={{ height: 500, width: 900 }}>
+      <Bar
+        data={data}
+        options={options} />
 
     </div>
 
