@@ -46,13 +46,13 @@ UNION ALL
     console.log(result2);
     if (result2 == null || result2.length == 0) {
       result = tf.tensor2d([
-        [(0 - meanEnergy) / stdEnergy, (0 - meanEnergy) / stdBytes],
+        [(0 - meanEnergy) / stdEnergy, (0 - meanBytes) / stdBytes],
       ]);
     } else {
       result = tf.tensor2d([
         [
           (result2[0].energy - meanEnergy) / stdEnergy,
-          (result2[0].bytes - meanEnergy) / stdBytes,
+          (result2[0].bytes - meanBytes) / stdBytes,
         ],
       ]);
     }
