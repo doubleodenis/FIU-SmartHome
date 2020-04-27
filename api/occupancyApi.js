@@ -39,7 +39,6 @@ router.get('/:userid', async (req, res) => {
 function parseData(result, totalTime) {
 	let res = [];
 	const startTime = moment().subtract(totalTime, 'minute');
-
 	//storing the persistent user id
 	const userid = result && result.length > 0 ? result[0].user_id : null;
 
@@ -49,17 +48,17 @@ function parseData(result, totalTime) {
 		let currentTime = startTime.clone().add(i, 'minute');
 
 		//Searching for all results within the same minute
-		let foundRows = result.filter(row => currentTime.isSame(moment(row.date), 'hour') && currentTime.isSame(moment(row.date), 'minute')); 0
-
+		let foundRows = result.filter(row => currentTime.isSame(moment(row.date), 'hour') && currentTime.isSame(moment(row.date), 'minute'));
+		
 		if (foundRows.length > 0) {
 			let currentOccupancy = 0, countFalse = 0, countTrue = 0;
 
 			foundRows.forEach(row => {
-				row.occupancy ? countFalse++ : countTrue++;
+				row.occupancy == 0 ? countFalse++ : countTrue++;
 			});
 
 			// return true if majority are true
-			currentOccupancy = countTrue > countFalse;
+			currentOccupancy = countTrue > countFalse ? 1 : 0;
 
 			res.push({ occupancy: currentOccupancy, date: currentTime.format("YYYY-MM-DD HH:mm:ss"), user_id: userid });
 		}
